@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<button id="btn">请求json文件</button>
+	<button id="btn2">请求PHP文件</button>
+	<div id="show"></div>
+	<script src="ajax.js"></script>
+	<script>
+		var btn=document.getElementById("btn"),
+			btn2=document.getElementById("btn2")
+			show=document.getElementById("show");
+			btn.onclick=function(){
+				ajax({
+					type:"get",
+					url:"data.json",
+					success:function(data){
+						var str='',
+						data=JSON.parse(data);
+						for(var i=0;i<data.length;i++){
+							str+='<p>姓名是'+data[i].name+','+data[i].age+'岁了</p>'
+						}
+						show.innerHTML=str
+					}
+				})
+			}
+			btn2.onclick=function(){
+				ajax({
+					type:'post',
+					url:'ajax.php',
+					data:"aaa=1",
+					success:function(data){
+						//var data=JSON.parse(data)
+						console.log(data)
+					},
+					error:function(){
+						alert("请求失败")
+					}
+				})
+			}
+	</script>
+</body>
+</html>

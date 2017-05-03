@@ -1,0 +1,112 @@
+AJAX概述
+
+1. 什么是ajax
+  asynchronous javascript and xml（异步的javascript和xml技术）
+  * 可以访问服务器，以往js不能访问服务器！
+  * 可以异步访问服务器，而且还是局部刷新
+
+2. 什么是异步交互(异步交互与同步交互的区别)				true异步false同步
+  * 提交表单、点击超链接，传统的交互方式都是同步交互
+    > 发一个请求，就要等到服务器响应后，才能做其他事情！在服务器响应之前，都是处于卡的状态！
+    > 一个请求，一个响应，再一个请求，再一个响应，这么一个流程！而且还整个页面进行刷新！
+  * 异步交互 
+    > 发一个请求后，无需等待服务器响应，就可以再发请求！没有卡的感觉！（增强了用户体验）
+    > 局部刷新，不是整个页面进行刷新，而是可以使用js技术完成页面的局部刷新
+
+3. ajax的应用场景
+  * 用户是否被注册
+  * 百度搜索栏
+
+4. ajax的优缺点
+  优点：
+  * 异步请求：增强了用户的体验
+  * 局部刷新：服务器响应的内容不在是整个页面，而是局部的数据，这样减少的服务器的压力！
+  缺点：
+  * 并不是所有的情景都可以使用ajax，也就是说大多数时候还要使用同步交互！
+  * ajax增强了用户的体验，但无形中增强了对服务器的访问次数，所以也增大了服务器的压力！
+
+----------------
+
+AJAX的第一例
+
+1. 四步操作
+  * 创建异步对象
+    > 其实学习ajax就是在学习这么一个对象，学会这个对象，就掌握了ajax技术
+    > 大多数浏览器都支持如下方式创建：ie7以后版本，firefox，chrome等：var xmlHttp = new XMLHttpRequest();
+    > IE5.5以及之前版本的IE有自己的方式：var xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+    > IE6.0也有一种自己的方式：var xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+    > 编写一个得到xmlHttp异步对象的方法
+    function createXMLHttpRequest() {
+      try {
+        return new XMLHttpRequest();//支持IE7.0之后版本的IE，其他大多数浏览器
+      } catch(e) {
+        try {
+	  return new ActiveXObject("Msxml2.XMLHTTP");//支持ie6.0
+	} catch(e) {
+	  try {
+	    return new ActiveXObject("Microsoft.XMLHTTP");//支持IE5.5以及更早版本
+	  } catch(e) {
+	    alert("哥们儿，你用的是什么浏览器啊？");
+	    throw e;
+	  }
+	}
+      }
+    }
+  * 打开与服务器的连接
+    > xmlHttp.open("GET", "/day23_1/AServlet", true);
+      * GET：指定请求方式
+      * /day23_1/AServlet：请求的URL
+      * true：指定使用异步处理！！！
+  * 发送请求
+    > xmlHttp.send(null)：如果不给null参数，可能会异步部份浏览器无法发送请求
+  * 注册监听
+    > 
+    xmlHttp.onreadystatechange = function() {
+        if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+	    var text = xmlHttp.responseText;
+	}
+    };
+
+---------------
+
+第一例；
+
+1. 编写一个Servlet，响应Hello Ajax!!!
+2. 编写页面，给出一个按钮，点击后执行ajax四步，把服务器响应结果显示在<h1>的元素中！
+
+---------------
+
+第二例：
+
+1. 编写一个Servlet，响应Hello Ajax!!!
+2. 编写页面，给出一个按钮，点击后执行ajax四步，把服务器响应结果显示在<h1>的元素中！
+  * 在ajax四步中的第二步，打开连接时，需要指定请求方式为POST：xmlHttp.open("POST", "/day23_1/BServlet", true)
+  * 添加一步：因为POST请求的Content-Type请求头的值必须为application/x-www-form-urlencoded
+    > xmlHttp.setRequestHeader("Content-Type", "application/x-www.form-urlencoded");
+  * 第四步在发送请求时，可以指定请求体内容：xmlHttp.send("username=zhangSan&password=123");
+
+---------------
+JSON
+
+1. 什么是JSON
+  * JSON是一种用字符串表示js对象的方式，它是一个轻量级的数据交换格式。
+  * 它与XML很相似！在AJAX中，我们在服务器端使用Java给客户端JS传递XML数据（字符串），这需要把先把数据转换成XML，再发送给JS，JS再解析XML
+  * 也可以让服务器端把数据转换成JSON串，发送给JS，JS解析JSON！！！
+
+2.  JSON语法
+  * {} --> 指定对象
+    > 属性名:属性值，其中属性名必须使用双引括起来。多个属性之间使用逗号分隔；
+    > {"name":"zhangSan", "age":18, "gender":"male"}
+  * [] --> 指定数组
+    > 多个元素之间使用逗号分隔；
+    > ["zhangSan", "liSi", "wangWu"]
+
+3. JSON与XML比较
+  * 可读性：xml胜出
+  * 解析难度：JSON本身就是JS的一部份，无需解析，所以胜出
+  * 流行度：XML已流行多年，所以XML胜出，但在AJAX领域，JSON更受欢迎！
+
+4. JS执行字符串
+  * eval()：把字符串当成JS代码来执行，但要把字符串使用小括号括起来！
+  * var sum = eval("(1+2)");//结果为3
+  * var person = eval("({\"name\":\"zhangSan\", \"age\":18})");
